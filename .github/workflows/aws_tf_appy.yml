@@ -1,0 +1,46 @@
+### Reusable workflow to plan terraform deployment, create artifact and upload to workflow artifacts for consumption ###
+name: "terraform apply-infra-plan"
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{secrets.AWS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ID}}
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
+        
+      
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2.0.2
+        
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+      
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform apply
+        if: github.ref == 'refs/head/main' && github.event_name == 'push'
+        run: terraform apply --auto-approve
+
