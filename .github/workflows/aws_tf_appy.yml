@@ -38,12 +38,14 @@ jobs:
         
       - name: Terraform apply
         run: terraform apply --auto-approve
-      - name: Ask for confirmation before destroying resources
-        if: github.event_name == 'pull_request'
-        run: echo "This is a pull request. Destroying resources is not allowed."
+        
+      #- name: Ask for confirmation before destroying resources
+       # if: github.event_name == 'pull_request'
+        #run: echo "This is a pull request. Destroying resources is not allowed."
+        
         
       - name: Ask for confirmation before destroying resources
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'schedule'
         run: |
           read -p "Are you sure you want to destroy resources? Type 'yes' to continue: " answer
           if [ "$answer" != "yes" ]
