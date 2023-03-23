@@ -43,9 +43,9 @@ jobs:
           cd https://github.com/archanavadde88/devops.git
           bash terraform-destroy.sh
         env:
-        TF_INPUT: false
+          TF_INPUT: false
         with:
-        confirm_destroy: 'false'
+          confirm_destroy: 'false'
         
       #- name: Ask for confirmation before destroying resources
        # if: github.event_name == 'pull_request'
