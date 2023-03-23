@@ -40,12 +40,12 @@ jobs:
         run: terraform apply --auto-approve
       - name: Prompt for confirmation
         run: |
-          cd terraform-destroy
+          cd https://github.com/archanavadde88/devops.git
           bash terraform-destroy.sh
         env:
         TF_INPUT: false
         with:
-        confirm_destroy: 'true'
+        confirm_destroy: 'false'
         
       #- name: Ask for confirmation before destroying resources
        # if: github.event_name == 'pull_request'
