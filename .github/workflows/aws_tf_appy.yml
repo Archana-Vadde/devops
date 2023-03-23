@@ -41,11 +41,14 @@ jobs:
       - name: Prompt for confirmation
         run: |
           cd https://github.com/archanavadde88/devops.git
-          bash terraform-destroy.sh
+          bash -e terraform-destroy.sh "${{ inputs.confirm_destroy }}"
         env:
           TF_INPUT: false
-        with:
-          confirm_destroy: 'false'
+        inputs:
+          confirm_destroy:
+            description: 'Confirm destroy'
+            required: false
+            default: 'false'
         
       #- name: Ask for confirmation before destroying resources
        # if: github.event_name == 'pull_request'
