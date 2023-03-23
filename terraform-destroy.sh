@@ -5,10 +5,4 @@
     else
       echo "Aborted."
     fi
-  env:
-    TF_INPUT: false
-  inputs:
-    confirm_destroy:
-      description: 'Confirm destroy'
-      required: true
-      default: 'false'
+  
