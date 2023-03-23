@@ -40,12 +40,12 @@ jobs:
         run: terraform apply --auto-approve
       - name: Prompt for confirmation
         run: |
-          read -p "Are you sure you want to destroy the AWS resources? [y/N] " response
-            if [[ "$response" =~ ^[Yy]$ ]]; then
-              terraform destroy
-            else
-              echo "Aborted."
-            fi
+          cd terraform-destroy
+          bash terraform-destroy.sh
+        env:
+        TF_INPUT: false
+        with:
+        confirm_destroy: 'true'
         
       #- name: Ask for confirmation before destroying resources
        # if: github.event_name == 'pull_request'
