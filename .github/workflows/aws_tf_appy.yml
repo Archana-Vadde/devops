@@ -1,4 +1,4 @@
-### Reusable workflow to plan terraform deployment, create artifact and upload to workflow artifacts for consumption ###
+
 name: "terraform apply-infra-plan"
 on: 
   push:
@@ -37,6 +37,11 @@ jobs:
       - name: Terraform apply
         id: apply
         run: terraform apply --auto-approve
+
+
+
+
+
       # - name: Prompt for confirmation
       #   run: |
       #     cd https://github.com/archanavadde88/devops.git
