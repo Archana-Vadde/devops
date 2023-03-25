@@ -1,60 +1,84 @@
+name: 'terraform-AWS'
 
-name: "terraform apply-infra-plan"
-on: 
+on:
   push:
     branches:
       - main
+    paths:
+     # - "/actions/terraform-aws/*"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: #this attribute will enable the manual run to the pipeline
+  
+
+# Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+defaults:
+  run:
+    shell: bash
+env: 
+  ROOT_PATH: '${{github.workspace}}/test/practice'
+  AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+  AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+  STAGE_NAME: production
 
 jobs:
-  terraform:
-    name: "Terraform"
+  terraform_plan:
+    name: 'terraform plan'
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-      AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-        
+    
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3.1.0
-             
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2.0.2
-        
+    - name: Checkout
+      uses: actions/checkout@v2
 
-      - name: Terraform Init
-        id: init
-        run: terraform init
+    - name: Setup terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+  
+    - name: terraform init
+      run: terraform init
+      working-directory: ${{ env.ROOT_PATH }}
+
+    - name: terraform Plan
+      run: terraform plan 
+      working-directory: ${{ env.ROOT_PATH }}
       
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate
 
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan
-      
-        
-      - name: Terraform apply
-        id: apply
-        run: terraform apply --auto-approve
+  terraform_apply:
+    name: 'terraform apply'
+    needs: [terraform_plan]
+    runs-on: ubuntu-latest
+    environment: production
+    
+    defaults:
+      run:
+        shell: bash
 
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
 
+    - name: Setup terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+ 
+    - name: terraform Init
+      run: terraform init
+      working-directory: ${{ env.ROOT_PATH }}
 
+    - name: terraform Init
+      run: echo 'var -> ${{inputs.tf_destroy}}'
+      working-directory: ${{ env.ROOT_PATH }}
 
+      #github.ref == 'refs/heads/main' && github.event_name == 'push'
+    - name: terraform Apply
+      run: terraform apply -auto-approve
+      if: ${{inputs.tf_destroy}} == false
+      working-directory: ${{ env.ROOT_PATH }}
 
-      # - name: Prompt for confirmation
-      #   run: |
-      #     cd https://github.com/archanavadde88/devops.git
-      #     bash -e terraform-destroy.sh "${{ github.event.inputs.confirm_destroy }}"
-      #   env:
-      #     TF_INPUT: false
-        
-        
-      #- name: Ask for confirmation before destroying resources
-       # if: github.event_name == 'pull_request'
-        #run: echo "This is a pull request. Destroying resources is not allowed."
-      
-      
-        
-        
-      
+    # - name: terraform destroy
+    #   run: terraform destroy -auto-approve
+    #   if: ${{inputs.tf_destroy}} == true
+    #   working-directory: ${{ env.ROOT_PATH }}
