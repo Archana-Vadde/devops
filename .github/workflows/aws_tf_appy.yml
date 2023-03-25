@@ -9,7 +9,7 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch: #this attribute will enable the manual run to the pipeline
+  #workflow_dispatch: #this attribute will enable the manual run to the pipeline
   
 
 # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -26,7 +26,6 @@ jobs:
   terraform_plan:
     name: 'terraform plan'
     runs-on: ubuntu-latest
-    
     steps:
     - name: Checkout
       uses: actions/checkout@v2
