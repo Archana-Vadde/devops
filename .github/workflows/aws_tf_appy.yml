@@ -81,3 +81,4 @@ jobs:
       run: terraform destroy -auto-approve
       if: ${{inputs.tf_destroy}} == true
       working-directory: ${{ env.ROOT_PATH }}
+      environment: should not destroy
