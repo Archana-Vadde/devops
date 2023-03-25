@@ -77,9 +77,34 @@ jobs:
       if: ${{inputs.tf_destroy}} == false
       working-directory: ${{ env.ROOT_PATH }}
 
-  terraform destroy:
+  terraform_destroy:
+    name: 'terraform destroy'
+    runs-on: ubuntu-latest
+    environment: destruction
+    
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3.1.0
+
+    - name: Setup terraform
+      uses: hashicorp/setup-terraform@v2.0.2
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+ 
+    - name: terraform Init
+      run: terraform init
+      working-directory: ${{ env.ROOT_PATH }}
+
+    - name: terraform Init
+      run: echo 'var -> ${{inputs.tf_destroy}}'
+      working-directory: ${{ env.ROOT_PATH }}
+
+      #github.ref == 'refs/heads/main' && github.event_name == 'push'
     - name: terraform destroy
       run: terraform destroy -auto-approve
       if: ${{inputs.tf_destroy}} == true
       working-directory: ${{ env.ROOT_PATH }}
-      environment: destroy
