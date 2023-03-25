@@ -77,7 +77,7 @@ jobs:
       if: ${{inputs.tf_destroy}} == true
       working-directory: ${{ env.ROOT_PATH }}
 
-    # - name: terraform destroy
-    #   run: terraform destroy -auto-approve
-    #   if: ${{inputs.tf_destroy}} == true
-    #   working-directory: ${{ env.ROOT_PATH }}
+    - name: terraform destroy
+      run: terraform destroy -auto-approve
+      if: ${{inputs.tf_destroy}} == true
+      working-directory: ${{ env.ROOT_PATH }}
