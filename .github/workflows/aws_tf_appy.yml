@@ -103,8 +103,9 @@ jobs:
       run: echo 'var -> ${{inputs.tf_destroy}}'
       working-directory: ${{ env.ROOT_PATH }}
 
-      #github.ref == 'refs/heads/main' && github.event_name == 'push'
+      ##github.ref == 'refs/heads/main' && github.event_name == 'push'
     - name: terraform destroy
       run: terraform destroy -auto-approve
       if: ${{inputs.tf_destroy}} == true
       working-directory: ${{ env.ROOT_PATH }}
+
